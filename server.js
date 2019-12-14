@@ -31,7 +31,7 @@ function runSearch() {
                 "View All Employees By Department",
                 "View All Employees By Manager",
                 "Add Employee",
-                "Remove Employee",
+                "Add Department",
                 "Update Employee Role",
                 "Update Employee Manager",
             ]
@@ -51,11 +51,11 @@ function runSearch() {
                     break;
 
                 case "Add Employee":
-                    // songSearch();
+                    addEmployee();
                     break;
 
-                case "Remove Employee":
-                    // songAndAlbumSearch();
+                case "Add Department":
+                    addDepartment();
                     break;
 
                 case "Update Employee Role":
@@ -86,33 +86,105 @@ function viewAllEmployees() {
 //FIND EMPLOYEES BY DEPARTMENT NAME
 function viewEmployeesbyDepartment() {
     inquirer
-      .prompt({
-        name: "name",
-        type: "input",
-        message: "What is the name of the Department would you like to look for?"
-      })
-      .then(function(answer) {
-        console.log(answer.name);
-        connection.query("SELECT * FROM employee WHERE id IN (SELECT id FROM department WHERE ?);", { name: answer.name }, function(err, res) {
-            console.table(res);
-          runSearch();
+        .prompt({
+            name: "name",
+            type: "input",
+            message: "What is the name of the Department would you like to look for?"
+        })
+        .then(function (answer) {
+            console.log(answer.name);
+            connection.query("SELECT * FROM employee WHERE id IN (SELECT id FROM department WHERE ?);", { name: answer.name }, function (err, res) {
+                console.table(res);
+                runSearch();
+            });
         });
-      });
-  }
+}
 
 //FIND EPLOYEES BY MANAGER ID
-  function viewEmployeesbyManager() {
+function viewEmployeesbyManager() {
     inquirer
-      .prompt({
-        name: "name",
-        type: "input",
-        message: "What is the ID of the Manager would you like to look for?"
-      })
-      .then(function(answer) {
-        console.log(answer.name);
-        connection.query("SELECT * FROM employee WHERE manager_id IN (SELECT id FROM employee WHERE ?);", { id: answer.name }, function(err, res) {
-            console.table(res);
-          runSearch();
+        .prompt({
+            name: "name",
+            type: "input",
+            message: "What is the ID of the Manager would you like to look for?"
+        })
+        .then(function (answer) {
+            console.log(answer.name);
+            connection.query("SELECT * FROM employee WHERE manager_id IN (SELECT id FROM employee WHERE ?);", { id: answer.name }, function (err, res) {
+                console.table(res);
+                runSearch();
+            });
         });
-      });
-  }
+}
+
+//ADD NEW EMPLOYEE
+function addEmployee() {
+    inquirer
+        .prompt([{
+            name: "first_name",
+            type: "input",
+            message: "Enter New Employee's First Name:"
+        }, {
+            name: "last_name",
+            type: "input",
+            message: "Enter New Employee's Last Name:"
+        }, {
+            name: "role_id",
+            type: "input",
+            message: "Enter New Employee's Role ID:"
+        },
+        {
+            name: "manager_id",
+            type: "input",
+            message: "Enter New Employee's Manager ID:"
+        }]
+        )
+        .then(function (answer) {
+            connection.query("INSERT INTO employee SET ?", {
+                first_name: answer.first_name,
+                last_name: answer.last_name,
+                role_id: answer.role_id,
+                manager_id: answer.manager_id
+            }, function (err, res) {
+                viewAllEmployees();
+                runSearch();
+            });
+        });
+
+}
+
+function viewAllEmployees() {
+    let query = `SELECT * FROM employee`;
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runSearch();
+    })
+}
+
+//ADD NEW DEPARTMENT
+function addDepartment() {
+    inquirer
+        .prompt({
+            name: "department",
+            type: "input",
+            message: "Enter New Department Name:"
+        })
+        .then(function (answer) {
+            connection.query("INSERT INTO department SET ?", {
+                name: answer.department
+            }, function (err, res) {
+                viewAllDepartments();
+                runSearch();
+            });
+        });
+}
+
+function viewAllDepartments() {
+    let query = `SELECT * FROM department`;
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runSearch();
+    })
+}
