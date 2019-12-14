@@ -33,7 +33,7 @@ function runSearch() {
                 "Add Employee",
                 "Add Department",
                 "Add Role",
-                "Update Employee Manager",
+                "Update Employee Role",
             ]
         })
         .then(function (answer) {
@@ -63,10 +63,6 @@ function runSearch() {
                     break;
 
                 case "Update Employee Role":
-                    // songAndAlbumSearch();
-                    break;
-
-                case "Update Employee Manager":
                     // songAndAlbumSearch();
                     break;
             }
