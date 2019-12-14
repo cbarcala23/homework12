@@ -43,11 +43,11 @@ function runSearch() {
                     break;
 
                 case "View All Employees By Department":
-                    viewAllDepartments();
+                    viewEmployeesbyDepartment();
                     break;
 
                 case "View All Employees By Manager":
-                    // rangeSearch();
+                    viewEmployeesbyManager();
                     break;
 
                 case "Add Employee":
@@ -81,12 +81,44 @@ function viewAllEmployees() {
     runSearch();
 }
 
-function viewAllDepartments() {
-    let query = `SELECT * FROM department`;
-    connection.query(query, function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        start();
-    })
-    runSearch();
-}
+// function viewAllDepartments() {
+//     let query = `SELECT * FROM department WHERE ?`;
+//     connection.query(query, function (err, res) {
+//         if (err) throw err;
+//         console.table(res);
+//         start();
+//     })
+//     runSearch();
+// }
+
+function viewEmployeesbyDepartment() {
+    inquirer
+      .prompt({
+        name: "name",
+        type: "input",
+        message: "What Department would you like to look for?"
+      })
+      .then(function(answer) {
+        console.log(answer.name);
+        connection.query("SELECT * FROM employee WHERE id IN (SELECT id FROM department WHERE ?);", { name: answer.name }, function(err, res) {
+            console.table(res);
+          runSearch();
+        });
+      });
+  }
+
+  function viewEmployeesbyManager() {
+    inquirer
+      .prompt({
+        name: "name",
+        type: "input",
+        message: "What Manager would you like to look for?"
+      })
+      .then(function(answer) {
+        console.log(answer.name);
+        connection.query("SELECT * FROM employee WHERE id IN (SELECT id FROM department WHERE ?);", { name: answer.name }, function(err, res) {
+            console.table(res);
+          runSearch();
+        });
+      });
+  }
