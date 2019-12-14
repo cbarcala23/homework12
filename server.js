@@ -68,6 +68,8 @@ function runSearch() {
             }
         });
 }
+
+//PRINT ALL EMPLOYEES
 function viewAllEmployees() {
     let query = `SELECT t.id, t.first_name, t.last_name, title, name 'department', salary, IFNULL(CONCAT(m.first_name, ' ' , m.last_name),
     'null') AS 'manager' FROM employee t
@@ -81,22 +83,13 @@ function viewAllEmployees() {
     runSearch();
 }
 
-// function viewAllDepartments() {
-//     let query = `SELECT * FROM department WHERE ?`;
-//     connection.query(query, function (err, res) {
-//         if (err) throw err;
-//         console.table(res);
-//         start();
-//     })
-//     runSearch();
-// }
-
+//FIND EMPLOYEES BY DEPARTMENT NAME
 function viewEmployeesbyDepartment() {
     inquirer
       .prompt({
         name: "name",
         type: "input",
-        message: "What Department would you like to look for?"
+        message: "What is the name of the Department would you like to look for?"
       })
       .then(function(answer) {
         console.log(answer.name);
@@ -107,16 +100,17 @@ function viewEmployeesbyDepartment() {
       });
   }
 
+//FIND EPLOYEES BY MANAGER ID
   function viewEmployeesbyManager() {
     inquirer
       .prompt({
         name: "name",
         type: "input",
-        message: "What Manager would you like to look for?"
+        message: "What is the ID of the Manager would you like to look for?"
       })
       .then(function(answer) {
         console.log(answer.name);
-        connection.query("SELECT * FROM employee WHERE id IN (SELECT id FROM department WHERE ?);", { name: answer.name }, function(err, res) {
+        connection.query("SELECT * FROM employee WHERE manager_id IN (SELECT id FROM employee WHERE ?);", { id: answer.name }, function(err, res) {
             console.table(res);
           runSearch();
         });
