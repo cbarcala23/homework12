@@ -32,7 +32,7 @@ function runSearch() {
                 "View All Employees By Manager",
                 "Add Employee",
                 "Add Department",
-                "Update Employee Role",
+                "Add Role",
                 "Update Employee Manager",
             ]
         })
@@ -56,6 +56,10 @@ function runSearch() {
 
                 case "Add Department":
                     addDepartment();
+                    break;
+
+                case "Add Role":
+                    addRole();
                     break;
 
                 case "Update Employee Role":
@@ -186,5 +190,44 @@ function viewAllDepartments() {
         if (err) throw err;
         console.table(res);
         runSearch();
+    })
+}
+
+//ADD NEW ROLE
+function addRole() {
+    inquirer
+      .prompt([{
+        name: "title",
+        type: "input",
+        message: "Enter New Role Title:"
+      }, {
+        name: "salary",
+        type: "input",
+        message: "Enter New Role Salary:"
+      }, {
+        name: "department_id",
+        type: "input",
+        message: "Enter New Role Department ID:"
+      },]
+      )
+      .then(function (answer) {
+        connection.query("INSERT INTO role SET ?", {
+            title: answer.title,
+            salary: answer.salary,
+            department_id: answer.department_id
+          }, function (err, res) {
+            if (err) throw err;
+            viewAllRoles();
+            runSearch();
+          });
+      });
+  }
+
+  function viewAllRoles() {
+    let query = `SELECT * FROM role`;
+    connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
     })
 }
